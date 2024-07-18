@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:myit/permissions/permission_manager.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await PermissionManager().requestMicrophonePermission();
+
+
   runApp(const MyApp());
 }
 
@@ -19,31 +24,35 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-//
-// class HomeScreen extends StatelessWidget {
-//   const HomeScreen({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final controller = WebViewController(
-//       onPermissionRequest: (request){
-//         log(request.toString());
-//         request.grant();
-//       }
-//     );
-//     controller..loadRequest(Uri.parse('https://translate.google.co.in/?sl=en&tl=hi&op=translate'))
-//     ..setJavaScriptMode(JavaScriptMode.unrestricted);
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('MyIT'),
-//       ),
-//       body: WebViewWidget(controller: controller,)
-//     );
-//   }
-// }
-
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = WebViewController(
+
+      onPermissionRequest: (request)async{
+        log("Permission request ${request.toString()}");
+        await Permission.microphone.request();
+        request.grant();
+      },
+
+    );
+
+    controller..loadRequest(Uri.parse('https://www.oration.ai/playground/aramco'))
+    ..setJavaScriptMode(JavaScriptMode.unrestricted);
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('MyIT'),
+      ),
+      body: WebViewWidget(controller: controller,)
+    );
+  }
+}
+
+
+/*class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
@@ -59,13 +68,12 @@ class HomeScreen extends StatelessWidget {
         title: const Text('MyIT'),
       ),
       body: InAppWebView(
-        initialUrlRequest: URLRequest(url: WebUri('https://translate.google.co.in/?sl=en&tl=hi&op=translate')),
+        initialUrlRequest: URLRequest(url: WebUri('https://www.oration.ai/playground/aramco')),
         // onWebViewCreated: (controller) => this.controller = controller,
         // onLoadStart: controller.onLoadStart,
         // onLoadStop: controller.onLoadStop,
         onPermissionRequest: (controller, request)async{
-          await PermissionManager().requestMicrophonePermission();
-          log(request.resources.length.toString());
+          log("Permission ${request.resources}");
           return PermissionResponse(action: PermissionResponseAction.GRANT, resources: request.resources);
         },
         onMicrophoneCaptureStateChanged: (c,cs,cse)async{
@@ -74,4 +82,28 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-}
+}*/
+
+
+
+/*
+class HomeScreen extends StatelessWidget{
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+
+      body: WebView(
+        initialUrl: 'https://www.oration.ai/playground/aramco',
+        javascriptMode: JavascriptMode.unrestricted,
+        initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+        debuggingEnabled: true,
+        allowsInlineMediaPlayback: true,
+
+      ),
+    );
+  }
+
+}*/
