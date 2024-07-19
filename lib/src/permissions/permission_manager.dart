@@ -1,7 +1,7 @@
-import 'package:myit/logger/logger.dart';
+import 'package:myit/src/logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-final logger = Logger('PermissionManager');
+final _logger = Logger('PermissionManager');
 
 class PermissionManager {
   // Check and request microphone permission
@@ -105,9 +105,9 @@ class PermissionManager {
     if (status.isGranted) {
       return true;
     } else if (status.isDenied) {
-      logger.log('Permission denied. Show a message to the user.');
+      _logger.log('Permission denied. Show a message to the user.');
     } else if (status.isPermanentlyDenied) {
-      logger.log('Permission permanently denied. Open app settings.');
+      _logger.log('Permission permanently denied. Open app settings.');
       openSettings();
     }
     return false;
@@ -117,12 +117,12 @@ class PermissionManager {
   Future<void> openSettings() async {
     final isOpen = await openAppSettings();
     if (!isOpen) {
-      logger.log('Failed to open settings');
+      _logger.log('Failed to open settings');
     }
   }
 
   Future<void> requestPermissionByName(String name) async {
-    logger.log(name);
+    _logger.log(name);
     switch(name){
       case 'microphone':{
         await Permission.microphone.request();
